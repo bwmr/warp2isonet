@@ -1,0 +1,23 @@
+[project]
+name = "warp2isonet"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+    "click",
+    "torch-projectors",
+    "warpylib",
+    "starfile",
+]
+
+[project.scripts]
+warp2isonet = "warp2isonet.cli:main"
+
+[[tool.uv.index]]
+name = "warpem"
+url = "https://warpem.github.io/torch-projectors/cpu/simple/"
+explicit = true
+
+[tool.uv.sources]
+torch-projectors = { index = "warpem" }
