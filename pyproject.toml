@@ -6,18 +6,53 @@ readme = "README.md"
 requires-python = ">=3.8"
 dependencies = [
     "click",
-    "torch-projectors",
     "warpylib",
     "starfile",
+
 ]
+[project.optional-dependencies]
+cpu    = ["torch-projectors", "torch==2.6.0"]
+cu126  = ["torch-projectors", "torch==2.6.0"]
+cu128  = ["torch-projectors", "torch==2.7.0"]
+cu129  = ["torch-projectors", "torch==2.8.0"]
 
 [project.scripts]
 warp2isonet = "warp2isonet.cli:main"
 
 [[tool.uv.index]]
-name = "warpem"
-url = "https://warpem.github.io/torch-projectors/cpu/simple/"
+name = "warpem-cpu"
+url  = "https://warpem.github.io/torch-projectors/cpu/simple/"
+explicit = true
+
+[[tool.uv.index]]
+name = "warpem-cu126"
+url  = "https://warpem.github.io/torch-projectors/cu126/simple/"
+explicit = true
+
+[[tool.uv.index]]
+name = "warpem-cu128"
+url  = "https://warpem.github.io/torch-projectors/cu128/simple/"
+explicit = true
+
+[[tool.uv.index]]
+name = "warpem-cu129"
+url  = "https://warpem.github.io/torch-projectors/cu129/simple/"
 explicit = true
 
 [tool.uv.sources]
-torch-projectors = { index = "warpem" }
+torch-projectors = [
+    { index = "warpem-cpu",   extra = "cpu" },
+    { index = "warpem-cu126", extra = "cu126" },
+    { index = "warpem-cu128", extra = "cu128" },
+    { index = "warpem-cu129", extra = "cu129" },
+]
+
+[tool.uv]
+conflicts = [
+    [
+        { extra = "cpu" },
+        { extra = "cu126" },
+        { extra = "cu128" },
+        { extra = "cu129" },
+    ],
+]
