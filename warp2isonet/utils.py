@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 from typing import Tuple
 
+import click
 import mrcfile
 import pandas as pd
 import starfile
@@ -149,6 +150,9 @@ def loop_over_tomograms(
     """
 
     tomo_list = parse_tomos(processing_folder)
+    if len(tomo_list) == 0:
+        click.echo("No tomograms found in processing folder.", err=True)
+        return
 
     output_star_list = []
 
