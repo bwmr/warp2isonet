@@ -171,14 +171,13 @@ def loop_over_tomograms(
     if len(tomo_list) == 0:
         click.echo("No tomograms found in processing folder.", err=True)
         return
-    else:
-        click.echo(f"Found {len(tomo_list)} tomograms in processing folder.")
 
     output_star_list = []
 
     with click.progressbar(
         tomo_list,
-        label="Reconstructing",
+        label="Reconstructing...",
+        show_pos=True,
         item_show_func=lambda t: t.name if t is not None else "",
     ) as bar:
         for tomo in bar:
