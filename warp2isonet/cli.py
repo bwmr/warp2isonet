@@ -2,15 +2,15 @@ from pathlib import Path
 
 import click
 
-from warp2isonet.utils import loop_over_tomograms
+from warp2isonet.utils import loop_over_tomograms, read_warp_settings
 
 
 @click.command()
 @click.option(
-    "--processing-folder",
-    type=click.Path(exists=True, file_okay=False, path_type=Path),
+    "--settings",
+    type=click.Path(exists=True, dir_okay=False, path_type=Path),
     required=True,
-    help="Folder with WarpTools tomogram processing results (contains .xml files).",
+    help="Path to a warp_tiltseries.settings file (supplies the processing folder and tomogram dimensions).",
 )
 @click.option(
     "--isonet-root-dir",
@@ -24,20 +24,14 @@ from warp2isonet.utils import loop_over_tomograms
     required=True,
     help="Binning level for reconstructions.",
 )
-@click.option(
-    "--dim-px",
-    type=(int, int, int),
-    default=(4092, 5760, 3000),
-    show_default=True,
-    help="Final tomogram dimensions in unbinned pixels (X Y Z).",
-)
 def main(
-    processing_folder: Path,
+    settings: Path,
     isonet_root_dir: Path,
     binning: int,
-    dim_px: tuple,
 ) -> None:
     """Convert a WarpTools processing folder into IsoNet2-ready EVN/ODD reconstructions."""
+    processing_folder, dim_px = read_warp_settings(settings)
+
     isonet_root_dir.mkdir(parents=True, exist_ok=True)
     loop_over_tomograms(
         processing_folder=processing_folder,

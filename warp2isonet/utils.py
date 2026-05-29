@@ -1,5 +1,6 @@
 import gc
 import os
+import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import Tuple
 
@@ -9,6 +10,24 @@ import pandas as pd
 import starfile
 import torch
 from warpylib import TiltSeries
+
+
+def read_warp_settings(
+    settings_path: Path,
+) -> Tuple[Path, Tuple[int, int, int]]:
+    """Read ProcessingFolder and Tomo Dimensions(X,Y,Z) from a warp_tiltseries.settings file.
+
+    The ProcessingFolder is resolved relative to the settings file's parent directory.
+    """
+    root = ET.parse(settings_path).getroot()
+    processing_folder = root.find("./Import/Param[@Name='ProcessingFolder']").get(
+        "Value"
+    )
+    dims = tuple(
+        int(root.find(f"./Tomo/Param[@Name='Dimensions{axis}']").get("Value"))
+        for axis in ("X", "Y", "Z")
+    )
+    return (Path(settings_path).parent / processing_folder).resolve(), dims
 
 
 def parse_tomos(processing_folder: Path):
@@ -94,7 +113,6 @@ def make_noCTF_EVNODD(
         desired_pixel_size=out_angpix,
         load_half_averages=True,
     )
-
     tomo_evn = ts.reconstruct_full(
         tilt_data=ts_evn, pixel_size=out_angpix, volume_dimensions_physical=dim_a
     )
@@ -153,6 +171,8 @@ def loop_over_tomograms(
     if len(tomo_list) == 0:
         click.echo("No tomograms found in processing folder.", err=True)
         return
+    else:
+        click.echo(f"Found {len(tomo_list)} tomograms in processing folder.")
 
     output_star_list = []
 
