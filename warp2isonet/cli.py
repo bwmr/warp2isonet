@@ -1,8 +1,15 @@
+import warnings
 from pathlib import Path
 
 import click
 
 from warp2isonet.utils import loop_over_tomograms, read_warp_settings
+
+warnings.filterwarnings(
+    "ignore",
+    message="To copy construct from a tensor",
+    category=UserWarning,
+)
 
 
 @click.command()
