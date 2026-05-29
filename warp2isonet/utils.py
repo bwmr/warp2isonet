@@ -176,10 +176,16 @@ def loop_over_tomograms(
 
     output_star_list = []
 
-    for tomo in tomo_list:
-        particle_star = make_noCTF_EVNODD(tomo, binning, isonet_root_dir, dim_px=dim_px)
-
-        output_star_list.append(particle_star)
+    with click.progressbar(
+        tomo_list,
+        label="Reconstructing",
+        item_show_func=lambda t: t.name if t is not None else "",
+    ) as bar:
+        for tomo in bar:
+            particle_star = make_noCTF_EVNODD(
+                tomo, binning, isonet_root_dir, dim_px=dim_px
+            )
+            output_star_list.append(particle_star)
 
     output_star = pd.DataFrame().from_records(output_star_list)
 
